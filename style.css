@@ -1,0 +1,118 @@
+:root {
+  --bg: #f7f4ee;
+  --surface: #ffffff;
+  --ink: #1c2230;
+  --ink-soft: #5b6472;
+  --line: #e4dfd3;
+  --navy: #1e3a5f;
+  --amber: #a8721f;
+  --amber-bg: #f3e4c4;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161f;
+    --surface: #1a2029;
+    --ink: #e7e6e1;
+    --ink-soft: #a7adbb;
+    --line: #2c3444;
+    --navy: #7ea3d6;
+    --amber: #e0b45c;
+    --amber-bg: #33301f;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+header.site {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+header.site .wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+}
+header.site a.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--navy);
+  font-weight: 700;
+  text-decoration: none;
+  margin-right: auto;
+}
+header.site a.brand img { width: 32px; height: 32px; border-radius: 8px; display: block; }
+header.site nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  margin-left: 18px;
+  font-size: 15px;
+}
+header.site nav a:hover, header.site nav a[aria-current="page"] { color: var(--navy); }
+
+main { padding: 44px 0 70px; }
+
+h1 { font-size: 34px; line-height: 1.2; color: var(--navy); margin: 0 0 8px; text-wrap: balance; }
+h2 { font-size: 22px; color: var(--navy); margin: 40px 0 6px; text-wrap: balance; }
+h3 { font-size: 17px; margin: 24px 0 2px; }
+p, ul { margin: 0 0 16px; }
+p, li, dd { overflow-wrap: anywhere; }  /* long addresses must not spill out of cards on phones */
+ul { padding-left: 22px; }
+li { margin-bottom: 8px; }
+a { color: var(--navy); }
+.lede { font-size: 19px; color: var(--ink-soft); }
+.meta { color: var(--ink-soft); font-size: 15px; }
+
+.hero { text-align: center; padding: 10px 0 6px; }
+.hero img { width: 128px; height: 128px; border-radius: 28px; box-shadow: 0 6px 22px rgba(20, 30, 50, .22); margin-bottom: 18px; }
+.hero h1 { font-size: 42px; }
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: var(--amber-bg);
+  border: 1px solid var(--amber);
+  border-radius: 999px;
+  padding: 2px 10px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 0 0 16px;
+}
+.card p:last-child, .card ul:last-child { margin-bottom: 0; }
+
+.faq dt { font-weight: 700; margin-top: 22px; }
+.faq dd { margin: 4px 0 0; color: var(--ink-soft); }
+
+footer.site {
+  border-top: 1px solid var(--line);
+  padding: 22px 0 40px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+footer.site a { color: var(--ink-soft); }
