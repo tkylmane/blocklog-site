@@ -1,6 +1,6 @@
-# BlockLog website
+# SKAJ website
 
-Static pages for BlockLog, published with GitHub Pages: a landing page, a
+Static pages for SKAJ (formerly BlockLog), published with GitHub Pages: a landing page, a
 privacy policy and a support page. These are the URLs App Store Connect asks
 for.
 
@@ -25,6 +25,24 @@ public.
 3. After a minute the site is at `https://<username>.github.io/<repo>/`.
 4. In App Store Connect use `<site>/privacy.html` as the Privacy Policy URL,
    `<site>/support.html` as the Support URL and `<site>/` as the Marketing URL.
+
+## Custom domain: skaj.app
+
+The domain is at Cloudflare (registrar and DNS); Email Routing there forwards
+feedback@skaj.app, so leave its MX/TXT records alone.
+
+1. GitHub → account Settings → Pages → *Add a domain* `skaj.app`, add the
+   TXT record it shows in Cloudflare DNS, then *Verify* (stops anyone else
+   claiming the domain on Pages).
+2. Cloudflare DNS for skaj.app, all **DNS only** (grey cloud): four `A`
+   records `@` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`,
+   `185.199.111.153`, and `CNAME` `www` → `tkylmane.github.io`.
+3. This repository → Settings → Pages → Custom domain `skaj.app`, Save (GitHub
+   commits a `CNAME` file — pull it). Once the check passes and the
+   certificate is issued, tick *Enforce HTTPS* (.app only works over HTTPS).
+4. The old `tkylmane.github.io/blocklog-site/…` addresses then redirect to
+   skaj.app. Change the three App Store Connect URLs to
+   `https://skaj.app/`, `…/privacy.html`, `…/support.html`.
 
 ## Keeping it true
 
