@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy Policy — SKAJ</title>
-<meta name="description" content="How SKAJ handles your data: it stays on your devices, and nothing is sent to any server.">
+<meta name="description" content="How SKAJ handles your data: it stays on your devices, backups are encrypted and go only where you choose, and nothing is sent to any server of mine.">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -24,10 +24,10 @@
 <main>
 <div class="wrap">
   <h1>Privacy Policy</h1>
-  <p class="meta">SKAJ for iPhone and iPad &middot; Effective 18 October 2026</p>
+  <p class="meta">SKAJ for iPhone and iPad &middot; Effective 23 October 2026</p>
 
   <div class="card">
-    <p><strong>In short.</strong> SKAJ keeps your logbook on your own devices. It has no account, no server, no advertising and no analytics, and it does not send your data anywhere. The only ways data leaves a device are ones you start yourself: exporting or backing up your logbook, syncing with your own other device, or emailing feedback.</p>
+    <p><strong>In short.</strong> SKAJ keeps your logbook on your own devices. It has no account, no server, no advertising and no analytics, and it never sends your logbook to me or anyone else. The only ways data leaves a device are ones you choose: encrypted backups to a folder you pick (such as your own iCloud Drive), exporting your logbook, syncing with your own other device, or emailing feedback.</p>
   </div>
 
   <h2>Who is responsible</h2>
@@ -46,7 +46,9 @@
 
   <h2>What leaves your device, and only if you choose</h2>
   <h3>Exports and backups</h3>
-  <p>You can export your logbook as a backup file (JSON), a CSV file or a PDF, and SKAJ can remind you monthly to back up. You decide where the file goes: the Files app, AirDrop, email or another app. Backup files are <strong>not encrypted</strong> and contain everything in your logbook, so keep them somewhere you trust. If you choose a fixed backup folder, SKAJ writes a file there once a month; it remembers only that folder location.</p>
+  <p>SKAJ backs up your logbook automatically. With a folder you choose once (for example in your own iCloud Drive), it saves a backup there by default every day, without asking. Otherwise it reminds you, by default weekly, and you choose where each backup goes: the Files app, AirDrop, email or another app. SKAJ remembers only that folder location. You can also make a backup, or export a CSV file or a PDF, whenever you like.</p>
+  <p>Backups are <strong>encrypted</strong> on your device before they are saved (AES-256). The key is kept in your iCloud Keychain, which Apple protects with end-to-end encryption and which brings the key to your other devices on the same Apple ID. SKAJ also shows you the key as a <em>recovery key</em>, after the first backup and any time in Settings, so you can open a backup on a device without your iCloud Keychain. Without the key, nobody can read a backup: not Apple, not me, and not you, so keep the recovery key safe.</p>
+  <p>&ldquo;Export readable backup&rdquo; creates an unencrypted copy (JSON) for an archive or another app. It contains everything in your logbook, so keep it somewhere you trust.</p>
   <h3>Safety copies</h3>
   <p>Before a sync replaces changes that exist only on one device, SKAJ saves a full copy of that device&rsquo;s logbook inside the app (up to five from the last 30 days, and always the newest). These are not visible in the Files app. You can restore or delete them in Settings &rarr; Import / Export / Backup &rarr; Safety copies.</p>
   <h3>Syncing your own devices</h3>
@@ -70,7 +72,7 @@
 
   <h2>Third parties</h2>
   <p>SKAJ has no advertising, no analytics, no crash-reporting service and no tracking, and it contains no third-party service that receives your data. It uses a few open-source libraries (for reading Excel files) that run entirely on your device. If you have agreed in iOS settings to share analytics or crash data with app developers, Apple may provide me anonymous reports; that is Apple&rsquo;s feature, governed by Apple&rsquo;s policies.</p>
-  <p>If you back up your iPhone or iPad with iCloud or a computer, iOS may include SKAJ&rsquo;s data in that backup according to your device settings. That is between you and Apple; SKAJ itself never uploads your logbook.</p>
+  <p>If you back up your iPhone or iPad with iCloud or a computer, iOS may include SKAJ&rsquo;s data in that backup according to your device settings. That is between you and Apple. SKAJ itself never uploads your logbook; if you choose an iCloud Drive folder for backups, iOS uploads those encrypted files to your own iCloud account.</p>
 
   <h2>Other people&rsquo;s information</h2>
   <p>You may enter the names of colleagues you fly with. That information stays on your devices under the same terms as everything else. You decide what to enter; please also follow your employer&rsquo;s rules about what you may store.</p>
