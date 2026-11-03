@@ -14,6 +14,8 @@ public.
 - `privacy.html` — privacy policy (Privacy Policy URL, required)
 - `support.html` — support and contact (Support URL, required)
 - `style.css`, `icon.png`, `favicon.png` — shared assets; no external requests
+- `home.css`, `day.js`, `img/` — home page styles, the scrolling tabs and screenshots from the demo logbook
+- `404.html`, `sitemap.xml` — not-found page and sitemap
 - `.nojekyll` — tells Pages to serve the files as they are
 
 ## Publishing (once)
