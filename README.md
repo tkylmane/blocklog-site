@@ -15,8 +15,6 @@ public.
 - `support.html` — support and contact (Support URL, required)
 - `style.css`, `icon.png`, `favicon.png` — shared assets; no external requests
 - `.nojekyll` — tells Pages to serve the files as they are
-- `oh/` — Tuomas's personal office-hours log (home-screen web app, data stays
-  on the phone); unlisted, not part of SKAJ, `Disallow`ed in `robots.txt`
 
 ## Publishing (once)
 
