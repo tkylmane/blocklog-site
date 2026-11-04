@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Office Hours</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Office h">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f3f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f151c" media="(prefers-color-scheme: dark)">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>
+/* Layout: one narrow column (phone first) — month summary, calendar, entry editor; Report and History as tabs. */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --ink:#15212e; --ink-soft:#5b6878; --line:#dbe1e8;
+  --accent:#1f5f9e; --accent-ink:#ffffff; --accent-soft:#e3edf7;
+  --ok:#1d7a4f; --warn:#a36200; --danger:#b3322b;
+  --f-display:"Avenir Next Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:-apple-system,system-ui,"Segoe UI",sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f151c; --surface:#18212b; --ink:#e6ecf2; --ink-soft:#9aa7b6; --line:#2b3744;
+  --accent:#6aa8e6; --accent-ink:#0b1622; --accent-soft:#1d3047;
+  --ok:#5cc28f; --warn:#e0a54a; --danger:#ef7d75; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151c; --surface:#18212b; --ink:#e6ecf2; --ink-soft:#9aa7b6; --line:#2b3744;
+  --accent:#6aa8e6; --accent-ink:#0b1622; --accent-soft:#1d3047;
+  --ok:#5cc28f; --warn:#e0a54a; --danger:#ef7d75; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+body{margin:0}
+button,input,select{-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:max(12px,env(safe-area-inset-top,0px));padding-bottom:max(40px,calc(env(safe-area-inset-bottom,0px) + 24px))}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1,h2{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
+h1{font-size:1.5rem} h2{font-size:1.2rem}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--ink-soft)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tabs{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:3px}
+.tabs button{border:0;background:none;color:var(--ink-soft);font:600 .9rem var(--f-body);padding:6px 12px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+button{font-family:var(--f-body)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 14px;font:600 .95rem var(--f-body);cursor:pointer;min-height:42px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:default}
+.iconbtn{width:40px;height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 1.2rem var(--f-mono);cursor:pointer}
+.monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.monthbar h2{flex:1;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.stat .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}
+.stat .v{font:500 1.35rem var(--f-mono);font-variant-numeric:tabular-nums}
+.stat .s{font-size:.8rem;color:var(--ink-soft)}
+.pos{color:var(--ok)} .neg{color:var(--danger)}
+.bar{height:8px;border-radius:4px;background:var(--accent-soft);overflow:hidden;margin-top:12px;position:relative}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.plan{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.plan .lbl{flex:1;min-width:150px}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper output{min-width:2.4ch;text-align:center;font:500 1.2rem var(--f-mono)}
+.cal{display:grid;grid-template-columns:2.2rem repeat(7,1fr);gap:4px;margin-top:4px}
+.cal .hd{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);text-align:center;padding:2px 0}
+.cal .wk{font:400 .7rem var(--f-mono);color:var(--ink-soft);display:flex;align-items:center;justify-content:center}
+.day{aspect-ratio:1/1;max-width:100%;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);padding:3px 4px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;cursor:pointer;font:inherit;min-width:0}
+.day .d{font-size:.75rem;color:var(--ink-soft)}
+.day .h{font:500 .9rem var(--f-mono);align-self:flex-end;color:var(--accent)}
+.day.has{background:var(--accent-soft);border-color:transparent}
+.day.today{border-color:var(--accent);border-width:2px}
+.day.sel{outline:2px solid var(--ink);outline-offset:1px}
+.day.blank{visibility:hidden}
+.day .n{width:5px;height:5px;border-radius:50%;background:var(--warn);align-self:flex-start}
+.editor{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
+.field label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;min-height:42px;width:100%}
+input.hours{font-family:var(--f-mono);font-size:1.15rem;text-align:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font:500 .9rem var(--f-mono);cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions .grow{flex:1}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);font-weight:600}
+th:first-child,td:first-child{text-align:left}
+td.note{text-align:left;white-space:normal;color:var(--ink-soft);min-width:8rem}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--accent-soft)}
+tfoot td{font-weight:600;border-bottom:0}
+td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td:first-child{font-family:var(--f-body)}
+.empty{padding:22px 8px;text-align:center;color:var(--ink-soft)}
+.banner{border-radius:8px;padding:9px 12px;font-size:.9rem;background:var(--accent-soft)}
+.banner.err{color:var(--danger)}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:.92rem;z-index:20;max-width:calc(100% - 32px)}
+pre.report{font:400 .78rem/1.45 var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;margin:0;white-space:pre}
+tr.paid td{color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,transparent)}
+th.note-h{text-align:left}
+.linkbtn{border:0;background:none;color:var(--danger);font:600 .85rem var(--f-body);cursor:pointer;padding:4px 6px}
+.stat .v.sm{font-size:1.15rem}
+.check{display:flex;align-items:center;gap:8px;font-size:.95rem}
+.check input{width:auto;min-height:0}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .3s ease}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Office hours</h1>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-log" aria-selected="true">Log</button>
+      <button role="tab" id="tab-report" aria-selected="false">Report</button>
+      <button role="tab" id="tab-history" aria-selected="false">History</button>
+    </div>
+  </header>
+
+  <div id="status" class="banner" hidden></div>
+
+  <!-- LOG -->
+  <section id="view-log" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="monthbar">
+        <button class="iconbtn" id="prev" aria-label="Previous month">‹</button>
+        <h2 id="monthTitle">—</h2>
+        <button class="iconbtn" id="next" aria-label="Next month">›</button>
+      </div>
+      <div class="plan">
+        <div class="lbl"><strong>Office days planned</strong><br><span class="muted" id="perDayLbl">7.5 h each</span></div>
+        <div class="stepper">
+          <button class="iconbtn" id="daysMinus" aria-label="One day fewer">−</button>
+          <output id="daysOut" class="num">0</output>
+          <button class="iconbtn" id="daysPlus" aria-label="One day more">+</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Target</div><div class="v" id="sTarget">0</div><div class="s">hours</div></div>
+        <div class="stat"><div class="k">Logged</div><div class="v" id="sLogged">0</div><div class="s" id="sDaysWorked">0 days</div></div>
+        <div class="stat"><div class="k">vs plan</div><div class="v" id="sBal">0</div><div class="s" id="sBalDays">0 days</div></div>
+      </div>
+      <div class="bar" aria-hidden="true"><i id="barFill" style="width:0"></i></div>
+      <p class="muted" style="margin:10px 0 0;font-size:.85rem" id="unpaidLine"></p>
+    </div>
+
+    <div class="card">
+      <div class="cal" id="cal"></div>
+    </div>
+
+    <form class="card editor" id="editor" autocomplete="off">
+      <div class="row">
+        <div class="field"><label for="fDate">Date</label><input type="date" id="fDate" required></div>
+        <div class="field" style="max-width:190px">
+          <label for="fHours">Hours</label>
+          <div class="stepper">
+            <button type="button" class="iconbtn" id="hMinus" aria-label="Half an hour less">−</button>
+            <input class="hours" id="fHours" inputmode="decimal" placeholder="0">
+            <button type="button" class="iconbtn" id="hPlus" aria-label="Half an hour more">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="field"><label for="fNote">Note</label><input id="fNote" placeholder="e.g. EBT reviews, meeting"></div>
+      <div class="actions">
+        <button type="submit" class="btn primary grow" id="saveBtn">Save</button>
+        <button type="button" class="btn danger" id="delBtn" hidden>Delete</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- REPORT -->
+  <section id="view-report" hidden style="flex-direction:column;gap:14px">
+    <div class="card editor">
+      <div class="row">
+        <div class="field"><label for="rFrom">From</label><select id="rFrom"></select></div>
+        <div class="field"><label for="rTo">To</label><select id="rTo"></select></div>
+      </div>
+      <div class="chips">
+        <button type="button" class="chip" data-range="since">Since last payment</button>
+        <button type="button" class="chip" data-range="this">This month</button>
+        <button type="button" class="chip" data-range="last">Last month</button>
+        <button type="button" class="chip" data-range="q">Last 3 months</button>
+        <button type="button" class="chip" data-range="ytd">This year</button>
+        <button type="button" class="chip" data-range="12">Last 12 months</button>
+      </div>
+      <label class="check"><input type="checkbox" id="rDaily" checked> Daily lines with notes</label>
+      <div class="actions">
+        <button type="button" class="btn primary" id="copyBtn">Copy text</button>
+        <button type="button" class="btn" id="csvBtn">Save CSV</button>
+        <button type="button" class="btn" id="xlsxBtn">Save Excel</button>
+      </div>
+    </div>
+    <pre class="report" id="reportOut"></pre>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="view-history" hidden style="flex-direction:column;gap:14px">
+    <div class="card">
+      <div class="stats" style="margin-top:0">
+        <div class="stat"><div class="k">Unpaid</div><div class="v" id="hUnpaid">0</div><div class="s" id="hUnpaidDays">0 days</div></div>
+        <div class="stat"><div class="k">Since last payment</div><div class="v" id="hSince">0</div><div class="s" id="hSinceLbl">no payments yet</div></div>
+        <div class="stat"><div class="k">Paid out</div><div class="v" id="hPaid">0</div><div class="s">days in total</div></div>
+      </div>
+    </div>
+
+    <form class="card editor" id="payForm" autocomplete="off">
+      <h2>Paid days</h2>
+      <div class="row">
+        <div class="field"><label for="pDate">Paid on</label><input type="date" id="pDate" required></div>
+        <div class="field" style="max-width:190px">
+          <label for="pDays">Days paid</label>
+          <div class="stepper">
+            <button type="button" class="iconbtn" id="pMinus" aria-label="One day fewer">−</button>
+            <input class="hours" id="pDays" inputmode="decimal" value="1">
+            <button type="button" class="iconbtn" id="pPlus" aria-label="One day more">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="pThrough">Covers hours through</label><select id="pThrough"></select></div>
+        <div class="field"><label for="pNote">Note</label><input id="pNote" placeholder="e.g. report sent 2.9."></div>
+      </div>
+      <div class="actions"><button type="submit" class="btn primary grow">Add payment</button></div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Paid on</th><th>Days</th><th>Hours</th><th>Through</th><th class="note-h">Note</th><th></th></tr></thead>
+          <tbody id="payBody"></tbody>
+        </table>
+      </div>
+    </form>
+
+    <div class="card">
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Month</th><th>Plan d</th><th>Target</th><th>Logged</th><th>vs plan</th><th>Unpaid h</th></tr></thead>
+          <tbody id="histBody"></tbody>
+          <tfoot id="histFoot"></tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="card row" style="align-items:center">
+      <div class="field"><label for="startFrom">Count unpaid hours from</label><select id="startFrom"></select></div>
+      <p class="muted" style="margin:0;font-size:.85rem;flex:2;min-width:180px">Months before this stay in the history but don't count toward unpaid hours.</p>
+    </div>
+    <div class="card editor">
+      <h2>Backup</h2>
+      <p class="muted" style="margin:0;font-size:.9rem" id="backupInfo">Your hours are stored on this iPhone only.</p>
+      <div class="actions">
+        <button type="button" class="btn primary" id="exportBtn">Back up to Files</button>
+        <label class="btn" for="importFile" style="display:inline-flex;align-items:center">Restore from file</label>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+      </div>
+      <div class="actions" id="restoreConfirm" hidden>
+        <span class="muted grow" id="restoreText"></span>
+        <button type="button" class="btn danger" id="restoreYes">Replace</button>
+        <button type="button" class="btn" id="restoreNo">Cancel</button>
+      </div>
+    </div>
+    <p class="muted" style="margin:0;font-size:.85rem">Unpaid h adds up the hours performed since the first month on record and takes off paid days (× 7.5 h) at the month they cover. The plan is for reference only. Tap a month to open it.</p>
+  </section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+const DEFAULT_PER_DAY = 7.5;
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const WD = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,"0");
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const keyOf = iso => iso.slice(0,7);
+const fmtH = h => { const r = Math.round(h*100)/100; return Number.isInteger(r) ? r.toFixed(1) : String(r); };
+const fmtSigned = h => (h > 0 ? "+" : h < 0 ? "−" : "±") + fmtH(Math.abs(h));
+const fmtDate = iso => { if (!iso) return "—"; const [y,m,d] = iso.split("-").map(Number); return `${d}.${m}.${y}`; };
+const monthLabel = k => { const [y,m] = k.split("-").map(Number); return `${MONTHS[m-1]} ${y}`; };
+const monthShort = k => { const [y,m] = k.split("-").map(Number); return `${MONTHS[m-1].slice(0,3)} ${y}`; };
+const addMonths = (k, n) => { let [y,m] = k.split("-").map(Number); m += n; while (m > 12) { m -= 12; y++; } while (m < 1) { m += 12; y--; } return `${y}-${pad(m)}`; };
+const daysIn = k => { const [y,m] = k.split("-").map(Number); return new Date(y, m, 0).getDate(); };
+const isoWeek = (y,m,d) => { const t = new Date(Date.UTC(y,m-1,d)); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(),0,1)); return Math.ceil(((t - y0)/86400000 + 1)/7); };
+const parseHours = s => { if (s == null) return NaN; s = String(s).trim().replace(",", "."); if (s === "") return 0; const m = s.match(/^(\d+):(\d{1,2})$/); if (m) return +m[1] + +m[2]/60; return Number(s); };
+
+let months = {};           // key -> {days, perDay, entries:{DD:{h,n}}}
+const STORE_KEY = "officeHours.v1";
+let lastBackup = null;
+function persist(){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({months, payments, settings, lastBackup, savedAt: new Date().toISOString()})); return true; }
+  catch { toast("Couldn't save on this device. Back up to Files now."); return false; }
+}
+function loadStore(){
+  try { const raw = localStorage.getItem(STORE_KEY); if (!raw) return false; const d = JSON.parse(raw);
+    months = d.months || {}; payments = d.payments || {}; settings = {startFrom: null, ...(d.settings || {})}; lastBackup = d.lastBackup || null; return true; }
+  catch { return false; }
+}
+let cur = keyOf(todayISO());
+let selDate = todayISO();
+
+function monthData(k){ return months[k] || {days:0, perDay:DEFAULT_PER_DAY, entries:{}}; }
+function summary(k){
+  const m = monthData(k), per = m.perDay || DEFAULT_PER_DAY;
+  const ents = Object.values(m.entries || {});
+  const logged = ents.reduce((s,e) => s + (+e.h || 0), 0);
+  const target = (m.days || 0) * per;
+  return {days:m.days||0, per, target, logged, bal: logged - target, worked: ents.filter(e => e.h > 0).length};
+}
+function allKeys(){
+  const ks = new Set(Object.keys(months)); ks.add(keyOf(todayISO()));
+  return [...ks].sort();
+}
+let payments = {};          // id -> {date, days, through (YYYY-MM), note}
+let settings = {startFrom: null};  // unpaid hours are counted from this month on
+const counted = k => !settings.startFrom || k >= settings.startFrom;
+const payList = () => Object.entries(payments).map(([id, p]) => ({id, ...p})).sort((a, b) => (a.through + a.date + a.id).localeCompare(b.through + b.date + b.id));
+const daysTxt = h => `${h === 0 ? "±0" : (h > 0 ? "+" : "−") + (Math.abs(h) / DEFAULT_PER_DAY).toFixed(1)} days`;
+function balances(){
+  const ks = allKeys(), pl = payList().filter(p => counted(p.through));
+  const earned = ks.filter(counted).reduce((s, k) => s + summary(k).logged, 0);
+  const paidDays = pl.reduce((s, p) => s + (+p.days || 0), 0);
+  const last = pl[pl.length - 1] || null;
+  const since = ks.filter(k => counted(k) && (!last || k > last.through)).reduce((s, k) => s + summary(k).logged, 0);
+  return {unpaid: earned - paidDays * DEFAULT_PER_DAY, paidDays, last, since};
+}
+// unpaid hours carried into month k: every earlier month's performed hours minus days paid for them
+function carryBefore(k){
+  const earned = allKeys().filter(x => x < k && counted(x)).reduce((s, x) => s + summary(x).logged, 0);
+  const paid = payList().filter(p => p.through < k && counted(p.through)).reduce((s, p) => s + p.days, 0);
+  return earned - paid * DEFAULT_PER_DAY;
+}
+const paidFor = (a, b) => payList().filter(p => p.through >= a && p.through <= b && counted(p.through)).reduce((s, p) => s + p.days, 0) * DEFAULT_PER_DAY;
+
+// ---------- persistence ----------
+function save(k, next){
+  months[k] = next; persist(); renderAll();
+}
+function clone(m){ return JSON.parse(JSON.stringify(m)); }
+
+// ---------- UI helpers ----------
+let toastT;
+function toast(msg){ const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200); }
+function status(msg, info=true){ const s = $("status"); if (!msg) { s.hidden = true; return; } s.textContent = msg; s.className = "banner" + (info ? "" : " err"); s.hidden = false; }
+
+// ---------- Log view ----------
+function renderMonth(){
+  const s = summary(cur), m = monthData(cur);
+  $("monthTitle").textContent = monthLabel(cur);
+  $("daysOut").textContent = s.days;
+  $("perDayLbl").textContent = `${fmtH(s.per)} h each`;
+  $("sTarget").textContent = fmtH(s.target);
+  $("sLogged").textContent = fmtH(s.logged);
+  $("sDaysWorked").textContent = `${s.worked} day${s.worked===1?"":"s"} logged`;
+  const b = $("sBal"); b.textContent = fmtSigned(s.bal); b.className = "v " + (s.bal > 0 ? "pos" : s.bal < 0 ? "neg" : "");
+  $("sBalDays").textContent = `${s.bal===0?"±0":(s.bal>0?"+":"−")+(Math.abs(s.bal)/s.per).toFixed(1)} days`;
+  $("barFill").style.width = (s.target > 0 ? Math.min(100, s.logged / s.target * 100) : (s.logged > 0 ? 100 : 0)) + "%";
+  const c = carryBefore(cur), pd = paidFor(cur, cur), end = c + (counted(cur) ? s.logged : 0) - pd;
+  $("unpaidLine").innerHTML = `Unpaid carried in <b class="num">${fmtH(c)}</b> h` + (pd ? ` · paid <b class="num">${fmtSigned(-pd)}</b> h` : "") + ` · unpaid at month end <b class="num">${fmtH(end)}</b> h = ${(end/DEFAULT_PER_DAY).toFixed(1)} days`;
+
+  const cal = $("cal"); cal.innerHTML = "";
+  cal.insertAdjacentHTML("beforeend", `<div class="hd">Wk</div>` + WD.map(w => `<div class="hd">${w.slice(0,2)}</div>`).join(""));
+  const [y, mo] = cur.split("-").map(Number);
+  const first = (new Date(y, mo-1, 1).getDay() + 6) % 7, n = daysIn(cur), today = todayISO();
+  let cell = 0;
+  const cells = Math.ceil((first + n) / 7) * 7;
+  for (let i = 0; i < cells; i++){
+    if (i % 7 === 0){
+      const dn = Math.min(Math.max(i - first + 1, 1), n);
+      cal.insertAdjacentHTML("beforeend", `<div class="wk">${isoWeek(y, mo, dn)}</div>`);
+    }
+    const dn = i - first + 1;
+    if (dn < 1 || dn > n){ cal.insertAdjacentHTML("beforeend", `<div class="day blank" aria-hidden="true"></div>`); continue; }
+    const iso = `${cur}-${pad(dn)}`, e = (m.entries || {})[pad(dn)];
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "day" + (e && e.h > 0 ? " has" : "") + (iso === today ? " today" : "") + (iso === selDate ? " sel" : "");
+    btn.setAttribute("aria-label", `${fmtDate(iso)}${e ? ", " + fmtH(e.h) + " hours" : ""}`);
+    btn.innerHTML = `<span class="d">${dn}</span>${e && e.n ? '<span class="n" title="Has a note"></span>' : ""}<span class="h">${e && e.h > 0 ? fmtH(e.h) : ""}</span>`;
+    btn.addEventListener("click", () => selectDate(iso, true));
+    cal.appendChild(btn);
+  }
+}
+function selectDate(iso, focus){
+  selDate = iso;
+  if (keyOf(iso) !== cur) cur = keyOf(iso);
+  const e = (monthData(keyOf(iso)).entries || {})[iso.slice(8)];
+  $("fDate").value = iso;
+  $("fHours").value = e ? fmtH(e.h).replace(/\.0$/,"") : "";
+  $("fNote").value = e ? (e.n || "") : "";
+  $("delBtn").hidden = !e;
+  $("saveBtn").textContent = e ? "Update" : "Save";
+  renderMonth();
+  if (focus) $("fHours").focus({preventScroll:true});
+}
+$("chips").innerHTML = [1,2,3,4,5,6,7.5,8].map(h => `<button type="button" class="chip" data-h="${h}">${h}</button>`).join("");
+$("chips").addEventListener("click", ev => { const b = ev.target.closest("[data-h]"); if (b) $("fHours").value = b.dataset.h; });
+const nudge = d => { const v = parseHours($("fHours").value); const n = Math.max(0, (isNaN(v) ? 0 : v) + d); $("fHours").value = String(Math.round(n*100)/100); };
+$("hMinus").onclick = () => nudge(-0.5);
+$("hPlus").onclick = () => nudge(0.5);
+$("fDate").addEventListener("change", () => { if ($("fDate").value) selectDate($("fDate").value, false); });
+$("editor").addEventListener("submit", ev => {
+  ev.preventDefault();
+  const iso = $("fDate").value; if (!iso) return;
+  const h = parseHours($("fHours").value);
+  if (isNaN(h) || h < 0 || h > 24){ toast("Hours must be between 0 and 24."); return; }
+  const k = keyOf(iso), dd = iso.slice(8), next = clone(monthData(k));
+  next.entries = next.entries || {};
+  const note = $("fNote").value.trim();
+  if (h === 0 && !note){ delete next.entries[dd]; }
+  else next.entries[dd] = {h, n: note};
+  if (next.perDay == null) next.perDay = DEFAULT_PER_DAY;
+  if (next.days == null) next.days = 0;
+  save(k, next);
+  toast(h === 0 && !note ? `Cleared ${fmtDate(iso)}` : `Saved ${fmtH(h)} h on ${fmtDate(iso)}`);
+  selectDate(iso, false);
+});
+$("delBtn").onclick = () => {
+  const iso = $("fDate").value, k = keyOf(iso), next = clone(monthData(k));
+  if (next.entries) delete next.entries[iso.slice(8)];
+  save(k, next); toast(`Deleted ${fmtDate(iso)}`); selectDate(iso, false);
+};
+const setDays = d => { const next = clone(monthData(cur)); next.days = Math.max(0, (next.days || 0) + d); if (next.perDay == null) next.perDay = DEFAULT_PER_DAY; next.entries = next.entries || {}; save(cur, next); };
+$("daysMinus").onclick = () => setDays(-1);
+$("daysPlus").onclick = () => setDays(1);
+$("prev").onclick = () => { cur = addMonths(cur, -1); selectDate(`${cur}-01`, false); };
+$("next").onclick = () => { cur = addMonths(cur, 1); selectDate(`${cur}-01`, false); };
+
+// ---------- History ----------
+function renderHistory(){
+  const ks = allKeys(), pl = payList(); let run = 0; const rows = [];
+  let tT = 0, tL = 0, tD = 0;
+  ks.forEach(k => {
+    const s = summary(k), on = counted(k); if (on) run += s.logged; tT += s.target; tL += s.logged; tD += s.days;
+    rows.push(`<tr class="click" data-k="${k}"><td>${monthShort(k)}</td><td>${s.days}</td><td>${fmtH(s.target)}</td><td>${fmtH(s.logged)}</td><td class="${s.bal>0?"pos":s.bal<0?"neg":""}">${fmtSigned(s.bal)}</td><td>${on ? fmtH(run) : "—"}</td></tr>`);
+    pl.filter(p => p.through === k).forEach(p => {
+      if (!on) return;
+      run -= p.days * DEFAULT_PER_DAY;
+      rows.push(`<tr class="paid"><td>Paid ${fmtDate(p.date)}</td><td>${fmtH(p.days).replace(/\.0$/,"")}</td><td></td><td></td><td>${fmtSigned(-p.days * DEFAULT_PER_DAY)}</td><td>${fmtH(run)}</td></tr>`);
+    });
+  });
+  // payments covering months with no record at all
+  pl.filter(p => !ks.includes(p.through) && counted(p.through)).forEach(p => { run -= p.days * DEFAULT_PER_DAY; rows.push(`<tr class="paid"><td>Paid ${fmtDate(p.date)}</td><td>${fmtH(p.days).replace(/\.0$/,"")}</td><td></td><td></td><td>${fmtSigned(-p.days * DEFAULT_PER_DAY)}</td><td>${fmtH(run)}</td></tr>`); });
+  $("histBody").innerHTML = rows.reverse().join("") || `<tr><td colspan="6" class="empty">No months yet.</td></tr>`;
+  const B = balances();
+  $("histFoot").innerHTML = `<tr><td>Total</td><td>${tD}</td><td>${fmtH(tT)}</td><td>${fmtH(tL)}</td><td>${fmtSigned(tL-tT)}</td><td>${fmtH(B.unpaid)}</td></tr>`;
+  const set = (id, h) => { const e = $(id); e.textContent = fmtSigned(h); e.className = "v " + (h > 0 ? "pos" : h < 0 ? "neg" : ""); };
+  $("hUnpaid").textContent = fmtH(B.unpaid) + " h"; $("hUnpaid").className = "v"; $("hUnpaidDays").textContent = `${(B.unpaid/DEFAULT_PER_DAY).toFixed(1)} days · ${Math.floor(B.unpaid/DEFAULT_PER_DAY + 1e-9)} full`;
+  $("hSince").textContent = fmtH(B.since) + " h"; $("hSince").className = "v"; $("hSinceLbl").textContent = B.last ? `hours after ${monthShort(B.last.through)}` : "no payments yet";
+  $("hPaid").textContent = fmtH(B.paidDays).replace(/\.0$/,"");
+  $("payBody").innerHTML = pl.slice().reverse().map(p =>
+    `<tr><td>${fmtDate(p.date)}</td><td>${fmtH(p.days).replace(/\.0$/,"")}</td><td>${fmtH(p.days * DEFAULT_PER_DAY)}</td><td>${monthShort(p.through)}</td><td class="note"></td><td><button type="button" class="linkbtn" data-del="${p.id}">Delete</button></td></tr>`).join("")
+    || `<tr><td colspan="6" class="empty">No paid days recorded yet.</td></tr>`;
+  [...$("payBody").querySelectorAll("td.note")].forEach((td, i) => td.textContent = pl.slice().reverse()[i].note || "");
+  fillThrough();
+  const sf = $("startFrom"); const ks2 = allKeys();
+  sf.innerHTML = `<option value="">First month on record</option>` + ks2.map(k => `<option value="${k}">${monthShort(k)}</option>`).join("");
+  sf.value = settings.startFrom || "";
+}
+function fillThrough(){
+  const sel = $("pThrough"), keep = sel.value;
+  const ks = allKeys(); const def = addMonths(keyOf($("pDate").value || todayISO()), -1);
+  if (!ks.includes(def)) ks.push(def);
+  ks.sort();
+  sel.innerHTML = ks.slice().reverse().map(k => `<option value="${k}">${monthShort(k)}</option>`).join("");
+  sel.value = keep && ks.includes(keep) && sel.dataset.touched ? keep : def;
+}
+$("pDate").value = todayISO();
+$("pDate").addEventListener("change", () => { delete $("pThrough").dataset.touched; fillThrough(); });
+$("pThrough").addEventListener("change", () => $("pThrough").dataset.touched = "1");
+const pNudge = d => { const v = parseHours($("pDays").value); $("pDays").value = String(Math.max(0.5, (isNaN(v) ? 0 : v) + d)); };
+$("pMinus").onclick = () => pNudge(-1);
+$("pPlus").onclick = () => pNudge(1);
+$("payForm").addEventListener("submit", ev => {
+  ev.preventDefault();
+  const date = $("pDate").value, days = parseHours($("pDays").value), through = $("pThrough").value;
+  if (!date || !through) return;
+  if (isNaN(days) || days <= 0 || days > 60){ toast("Days paid must be more than 0."); return; }
+  const id = `p${date.replace(/-/g, "")}-${Date.now().toString(36)}`;
+  const rec = {date, days, through, note: $("pNote").value.trim()};
+  payments = {...payments, [id]: rec}; persist(); renderAll();
+  toast(`Recorded ${fmtH(days).replace(/\.0$/,"")} paid days`);
+  $("pNote").value = ""; $("pDays").value = "1";
+});
+$("startFrom").addEventListener("change", () => {
+  settings = {...settings, startFrom: $("startFrom").value || null}; renderAll();
+  persist(); toast("Saved");
+});
+$("payBody").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-del]"); if (!b) return;
+  if (b.dataset.armed !== "1"){ b.dataset.armed = "1"; b.textContent = "Tap to confirm"; setTimeout(() => { if (b.isConnected){ b.dataset.armed = ""; b.textContent = "Delete"; } }, 3000); return; }
+  const id = b.dataset.del; const next = {...payments}; delete next[id]; payments = next; renderAll();
+  persist(); toast("Payment deleted");
+});
+$("histBody").addEventListener("click", ev => { const r = ev.target.closest("tr[data-k]"); if (!r) return; cur = r.dataset.k; selectDate(`${cur}-01`, false); showTab("log"); });
+
+// ---------- Report ----------
+function fillRangeSelects(){
+  const ks = allKeys(); const opts = ks.map(k => `<option value="${k}">${monthShort(k)}</option>`).join("");
+  const f = $("rFrom").value, t = $("rTo").value;
+  $("rFrom").innerHTML = opts; $("rTo").innerHTML = opts;
+  const now = keyOf(todayISO());
+  $("rFrom").value = ks.includes(f) ? f : now; $("rTo").value = ks.includes(t) ? t : now;
+}
+function reportData(){
+  let a = $("rFrom").value, b = $("rTo").value; if (a > b) [a, b] = [b, a];
+  const ks = []; for (let k = a; k <= b; k = addMonths(k, 1)) ks.push(k);
+  const rows = ks.map(k => ({k, s: summary(k), m: monthData(k)}));
+  const tot = rows.reduce((t, r) => ({days: t.days + r.s.days, target: t.target + r.s.target, logged: t.logged + r.s.logged}), {days:0, target:0, logged:0});
+  const daily = [];
+  rows.forEach(r => Object.keys(r.m.entries || {}).sort().forEach(dd => { const e = r.m.entries[dd]; daily.push({iso: `${r.k}-${dd}`, h: e.h, n: e.n || ""}); }));
+  const paid = payList().filter(p => p.through >= a && p.through <= b && counted(p.through));
+  return {a, b, rows, tot, daily, paid};
+}
+const wdOf = iso => WD[(new Date(iso + "T12:00").getDay() + 6) % 7];
+function reportText(){
+  const {a, b, rows, tot, daily, paid} = reportData();
+  const first = `${a}-01`, last = `${b}-${pad(daysIn(b))}`;
+  const L = [];
+  L.push(`OFFICE HOURS REPORT  ${fmtDate(first)} – ${fmtDate(last)}`);
+  L.push(`Paid by hours performed; 1 day = 7.5 h. Plan shown for reference.`);
+  L.push("");
+  L.push("Month      Plan d   Logged    Days   vs plan");
+  L.push("─".repeat(46));
+  rows.forEach(({k, s}) => L.push(`${monthShort(k).padEnd(10)} ${String(s.days).padStart(5)} ${fmtH(s.logged).padStart(8)} ${(s.logged/DEFAULT_PER_DAY).toFixed(1).padStart(7)} ${fmtSigned(s.bal).padStart(9)}`));
+  L.push("─".repeat(46));
+  const vsPlan = tot.logged - tot.target;
+  L.push(`${"Total".padEnd(10)} ${String(tot.days).padStart(5)} ${fmtH(tot.logged).padStart(8)} ${(tot.logged/DEFAULT_PER_DAY).toFixed(1).padStart(7)} ${fmtSigned(vsPlan).padStart(9)}`);
+  L.push(`Days with hours logged: ${daily.filter(d=>d.h>0).length}`);
+  const carry = carryBefore(a), pdH = paid.reduce((s, p) => s + p.days, 0) * DEFAULT_PER_DAY;
+  if (paid.length){
+    L.push(""); L.push("Paid days covering this period"); L.push("─".repeat(46));
+    paid.forEach(p => L.push(`Paid ${fmtDate(p.date).padEnd(11)} ${fmtH(p.days).replace(/\.0$/,"").padStart(4)} d ${fmtSigned(-p.days*DEFAULT_PER_DAY).padStart(8)} h  through ${monthShort(p.through)}${p.note ? "  " + p.note : ""}`));
+  }
+  const perf = rows.filter(r => counted(r.k)).reduce((x, r) => x + r.s.logged, 0);
+  const open = carry + perf - pdH, full = Math.max(0, Math.floor(open / DEFAULT_PER_DAY + 1e-9)), rest = open - full * DEFAULT_PER_DAY;
+  L.push(""); L.push("Unpaid hours"); L.push("─".repeat(46));
+  if (carry) L.push(`${("Carried in at " + fmtDate(first)).padEnd(34)} ${fmtH(carry).padStart(10)}`);
+  L.push(`${"Performed this period".padEnd(34)} ${fmtH(perf).padStart(10)}`);
+  if (pdH) L.push(`${"Paid out".padEnd(34)} ${fmtSigned(-pdH).padStart(10)}`);
+  L.push(`${("Unpaid at " + fmtDate(last)).padEnd(34)} ${fmtH(open).padStart(10)}  (${(open/DEFAULT_PER_DAY).toFixed(1)} days)`);
+  L.push(`${"Full days to claim".padEnd(34)} ${String(full).padStart(10)}  (${fmtH(full*DEFAULT_PER_DAY)} h, ${fmtH(rest)} h carries over)`);
+  if ($("rDaily").checked && daily.length){
+    L.push(""); L.push("Date              Wk   Hours  Note"); L.push("─".repeat(46));
+    daily.forEach(d => { const [y,m,dd] = d.iso.split("-").map(Number); L.push(`${(wdOf(d.iso) + " " + fmtDate(d.iso)).padEnd(16)} ${String(isoWeek(y,m,dd)).padStart(3)} ${fmtH(d.h).padStart(7)}  ${d.n}`.trimEnd()); });
+  }
+  return L.join("\n");
+}
+function renderReport(){ $("reportOut").textContent = reportText(); }
+["rFrom","rTo","rDaily"].forEach(id => $(id).addEventListener("change", renderReport));
+document.querySelector("#view-report .chips").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-range]"); if (!b) return;
+  const now = keyOf(todayISO()), r = b.dataset.range;
+  const B = balances();
+  const [from, to] = r === "since" ? [B.last ? addMonths(B.last.through, 1) : (settings.startFrom || allKeys()[0]), now] : r === "this" ? [now, now] : r === "last" ? [addMonths(now,-1), addMonths(now,-1)] : r === "q" ? [addMonths(now,-3), addMonths(now,-1)] : r === "ytd" ? [now.slice(0,4) + "-01", now] : [addMonths(now,-12), addMonths(now,-1)];
+  const ks = allKeys();
+  const ensure = k => { if (!ks.includes(k)) { months[k] = months[k] || {days:0, perDay:DEFAULT_PER_DAY, entries:{}}; } };
+  ensure(from); ensure(to); fillRangeSelects();
+  $("rFrom").value = from; $("rTo").value = to; renderReport();
+});
+$("copyBtn").onclick = () => {
+  const txt = reportText();
+  const sel = () => { const r = document.createRange(); r.selectNodeContents($("reportOut")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Selected — copy it with your device's Copy."); };
+  try { navigator.clipboard.writeText(txt).then(() => toast("Report copied"), sel); } catch { sel(); }
+};
+function reportRows(){
+  const {a, rows, tot, daily, paid} = reportData();
+  const r2 = x => Math.round(x*100)/100;
+  const sum = [["Month","Planned days","Logged h","Days (÷7.5)","vs plan h"]];
+  rows.forEach(({k,s}) => sum.push([monthShort(k), s.days, s.logged, r2(s.logged/DEFAULT_PER_DAY), r2(s.bal)]));
+  const carry = carryBefore(a), pdH = paid.reduce((s, p) => s + p.days, 0) * DEFAULT_PER_DAY;
+  sum.push(["Total", tot.days, tot.logged, r2(tot.logged/DEFAULT_PER_DAY), r2(tot.logged - tot.target)]);
+  const perf = rows.filter(r => counted(r.k)).reduce((x, r) => x + r.s.logged, 0);
+  const open = carry + perf - pdH, full = Math.max(0, Math.floor(open / DEFAULT_PER_DAY + 1e-9));
+  sum.push([]);
+  sum.push(["Carried in (unpaid h)", "", r2(carry)]);
+  paid.forEach(p => sum.push([`Paid ${fmtDate(p.date)}`, "", r2(-p.days * DEFAULT_PER_DAY), -p.days]));
+  sum.push(["Unpaid at end", "", r2(open), r2(open/DEFAULT_PER_DAY)]);
+  sum.push(["Full days to claim", "", r2(full*DEFAULT_PER_DAY), full]);
+  sum.push(["Carries over", "", r2(open - full*DEFAULT_PER_DAY)]);
+  const det = [["Date","Weekday","Week","Hours","Note"]];
+  daily.forEach(d => { const [y,m,dd] = d.iso.split("-").map(Number); det.push([fmtDate(d.iso), wdOf(d.iso), isoWeek(y,m,dd), d.h, d.n]); });
+  return {sum, det};
+}
+const fileBase = () => { const {a,b} = reportData(); return a === b ? `Office hours ${a}` : `Office hours ${a} to ${b}`; };
+const MIME = {csv:"text/csv", xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", json:"application/json"};
+async function offer(filename, data){
+  const type = MIME[filename.split(".").pop()] || "application/octet-stream";
+  const file = new File([data], filename, {type});
+  if (navigator.canShare && navigator.canShare({files: [file]})){
+    try { await navigator.share({files: [file]}); return true; }
+    catch (e) { if (e && e.name === "AbortError") return false; }
+  }
+  const url = URL.createObjectURL(file), a = document.createElement("a");
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+  return true;
+}
+$("csvBtn").onclick = () => {
+  const {sum, det} = reportRows();
+  const esc = v => { const s = String(v); return /[";\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; };
+  const rows = [...sum, [], ...($("rDaily").checked ? det : [])];
+  // semicolon + decimal comma so Finnish Excel opens it in columns
+  const csv = "﻿" + rows.map(r => r.map(v => typeof v === "number" ? String(v).replace(".", ",") : esc(v)).join(";")).join("\r\n");
+  offer(fileBase() + ".csv", csv);
+};
+let xlsxLoad;
+const loadXLSX = () => xlsxLoad || (xlsxLoad = new Promise((res, rej) => { const s = document.createElement("script"); s.src = "xlsx.full.min.js"; s.onload = () => res(window.XLSX); s.onerror = rej; document.head.appendChild(s); }));
+$("xlsxBtn").onclick = async () => {
+  let X; try { X = await loadXLSX(); } catch { toast("Couldn't load the Excel writer. Try again online, or use CSV."); return; }
+  const {sum, det} = reportRows(); const wb = X.utils.book_new();
+  const ws1 = X.utils.aoa_to_sheet(sum); ws1["!cols"] = [{wch:20},{wch:12},{wch:10},{wch:11},{wch:10}]; X.utils.book_append_sheet(wb, ws1, "Summary");
+  if ($("rDaily").checked){ const ws2 = X.utils.aoa_to_sheet(det); ws2["!cols"] = [{wch:11},{wch:8},{wch:6},{wch:7},{wch:40}]; X.utils.book_append_sheet(wb, ws2, "Days"); }
+  const buf = X.write(wb, {bookType:"xlsx", type:"array"});
+  offer(fileBase() + ".xlsx", new Uint8Array(buf));
+};
+
+// ---------- tabs ----------
+function showTab(name){
+  ["log","report","history"].forEach(n => {
+    $("tab-" + n).setAttribute("aria-selected", n === name);
+    const v = $("view-" + n); v.hidden = n !== name; if (n === name) v.style.display = "flex";
+  });
+  if (name === "report"){ fillRangeSelects(); renderReport(); }
+  if (name === "history"){ renderHistory(); renderBackup(); }
+}
+["log","report","history"].forEach(n => $("tab-" + n).onclick = () => showTab(n));
+
+function renderAll(){
+  renderMonth();
+  if (!$("view-history").hidden) renderHistory();
+  if (!$("view-report").hidden){ fillRangeSelects(); renderReport(); }
+}
+
+// ---------- backup ----------
+function renderBackup(){
+  const n = Object.values(months).reduce((c, m) => c + Object.keys(m.entries || {}).length, 0);
+  $("backupInfo").textContent = `Your hours are stored on this iPhone only (${n} days logged). ` +
+    (lastBackup ? `Last backup ${fmtDate(lastBackup.slice(0,10))}.` : "No backup made yet.");
+}
+$("exportBtn").onclick = async () => {
+  const data = JSON.stringify({app: "office-hours", version: 1, exportedAt: new Date().toISOString(), months, payments, settings}, null, 1);
+  const ok = await offer(`Office hours backup ${todayISO()}.json`, data);
+  if (ok){ lastBackup = new Date().toISOString(); persist(); renderBackup(); }
+};
+let pendingRestore = null;
+$("importFile").addEventListener("change", ev => {
+  const f = ev.target.files && ev.target.files[0]; ev.target.value = ""; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (!d || typeof d.months !== "object") throw 0;
+      pendingRestore = d;
+      const n = Object.values(d.months).reduce((c, m) => c + Object.keys(m.entries || {}).length, 0);
+      $("restoreText").textContent = `Replace everything here with this backup (${n} days, ${Object.keys(d.payments || {}).length} payments${d.exportedAt ? ", made " + fmtDate(d.exportedAt.slice(0,10)) : ""})?`;
+      $("restoreConfirm").hidden = false;
+    } catch { toast("That file isn't an office hours backup."); }
+  };
+  r.readAsText(f);
+});
+$("restoreNo").onclick = () => { pendingRestore = null; $("restoreConfirm").hidden = true; };
+$("restoreYes").onclick = () => {
+  const d = pendingRestore; if (!d) return;
+  months = d.months || {}; payments = d.payments || {}; settings = {startFrom: null, ...(d.settings || {})};
+  persist(); status(""); pendingRestore = null; $("restoreConfirm").hidden = true;
+  selectDate(selDate, false); renderAll(); renderBackup(); toast("Backup restored");
+};
+
+// ---------- boot ----------
+const hadData = loadStore();
+selectDate(selDate, false);
+renderBackup();
+if (!hadData) status("No hours here yet. Restore your backup file on the History tab, or start logging.");
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch {}
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+window.addEventListener("storage", e => { if (e.key === STORE_KEY && loadStore()){ selectDate(selDate, false); renderAll(); } });
+})();
+</script>
+</body>
+</html>
