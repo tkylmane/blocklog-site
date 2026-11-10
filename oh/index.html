@@ -274,6 +274,7 @@ th.note-h{text-align:left}
       </div>
     </div>
     <p class="muted" style="margin:0;font-size:.85rem">Unpaid h adds up the hours performed since the first month on record and takes off paid days (× 7.5 h) at the month they cover. The plan is for reference only. Tap a month to open it.</p>
+    <p class="muted num" style="margin:0;font-size:.8rem;text-align:center" id="appVersion">Version —</p>
   </section>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -687,6 +688,16 @@ renderBackup();
 if (!hadData) status("No hours here yet. Restore your backup file on the History tab, or start logging.");
 try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch {}
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+// Installed version = the offline cache in use, named after VERSION in sw.js (e.g. "oh-3")
+function showVersion(){
+  if (!window.caches) return;
+  caches.keys().then(ks => {
+    const v = ks.filter(k => /^oh-\d+$/.test(k)).sort((a, b) => +b.slice(3) - +a.slice(3))[0];
+    $("appVersion").textContent = v ? `Version ${v.slice(3)}` : "Version — (not installed for offline use yet)";
+  }).catch(() => {});
+}
+showVersion();
+if ("serviceWorker" in navigator) navigator.serviceWorker.addEventListener("controllerchange", () => setTimeout(showVersion, 500));
 window.addEventListener("storage", e => { if (e.key === STORE_KEY && loadStore()){ selectDate(selDate, false); renderAll(); } });
 })();
 </script>
