@@ -687,7 +687,7 @@ selectDate(selDate, false);
 renderBackup();
 if (!hadData) status("No hours here yet. Restore your backup file on the History tab, or start logging.");
 try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch {}
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js", {updateViaCache: "none"}).catch(() => {});
 // Installed version = the offline cache in use, named after VERSION in sw.js (e.g. "oh-3")
 function showVersion(){
   if (!window.caches) return;
