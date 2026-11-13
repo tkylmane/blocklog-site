@@ -13,6 +13,7 @@ public.
 - `index.html` — landing page (marketing URL)
 - `privacy.html` — privacy policy (Privacy Policy URL, required)
 - `support.html` — support and contact (Support URL, required)
+- `finnair-export.html` — the Finnair export steps from SKAJ's setup, with the app's drawn guide pictures (`guide/`, illustrations with example data); linked from the app only (no link from the other pages, `noindex`)
 - `style.css`, `icon.png`, `favicon.png` — shared assets; no external requests
 - `home.css`, `day.js`, `img/` — home page styles, the scrolling tabs and screenshots from the demo logbook
 - `404.html`, `sitemap.xml` — not-found page and sitemap

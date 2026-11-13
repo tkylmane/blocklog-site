@@ -116,3 +116,8 @@ footer.site {
   font-size: 14px;
 }
 footer.site a { color: var(--ink-soft); }
+
+/* Guide pictures (finnair-export.html): the spot to look for, ringed. */
+figure.guide { position: relative; margin: 12px 0 20px; max-width: 560px; border: 1px solid rgba(20, 30, 50, .15); border-radius: 8px; overflow: hidden; }
+figure.guide img { display: block; width: 100%; height: auto; }
+figure.guide .ring { position: absolute; box-sizing: content-box; margin: -4px; padding: 1px; border: 3px solid #E4572E; border-radius: 6px; }
