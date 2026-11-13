@@ -59,6 +59,7 @@ section.block + section.block { padding-top: 0; }
 .cta-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .cta-note { color: var(--ink-soft); font-size: 15px; margin: 0; }
 .cta-note strong { color: var(--ink); }
+.cta-note .badge { margin: 0 8px 0 0; }
 .small { color: var(--ink-soft); font-size: 14px; margin-top: 18px; }
 
 /* Stand-in until launch day: replaced by Apple's own badge artwork. */
@@ -308,7 +309,6 @@ html:not(.js) .day-tab { color: var(--navy); }
 /* Phone */
 @media (max-width: 640px) {
   section.block { padding: 64px 0; }
-  header.site nav a:not(.get) { display: none; }
   .hero2 .lede { font-size: 18px; }
   .phones { height: 470px; max-width: 330px; }
   .phones .phone { width: 210px; }
