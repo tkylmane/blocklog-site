@@ -137,7 +137,7 @@ section.block + section.block { padding-top: 0; }
 }
 .row.flip .text { order: 2; }
 .row h2 { font-size: clamp(28px, 3.4vw, 38px); line-height: 1.15; letter-spacing: -.01em; margin: 0 0 14px; }
-.row .text > p { font-size: 18px; color: var(--ink-soft); }
+.row .text > p:not(.eyebrow) { font-size: 18px; color: var(--ink-soft); }
 .row ul { list-style: none; padding: 0; margin: 20px 0 0; }
 .row li { padding: 9px 0 9px 26px; border-top: 1px solid var(--line); margin: 0; position: relative; }
 .row li::before {
@@ -322,6 +322,25 @@ html:not(.js) .day-tab { color: var(--navy); }
   .row { padding: 36px 0; }
   .split .card { padding: 24px; }
 }
+
+/* Fewer taps: the three steps of logging a flight */
+.ux .row { padding: 0; }
+.flow { list-style: none; margin: 0; padding: 0; counter-reset: f; display: grid; gap: 14px; max-width: 380px; width: 100%; justify-self: center; }
+.flow li {
+  counter-increment: f;
+  display: grid; grid-template-columns: 52px 1fr; column-gap: 16px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  padding: 18px 20px; box-shadow: var(--shadow);
+}
+.flow li::before { content: none; }  /* .row li draws a bullet dot */
+.flow svg {
+  grid-row: span 2; width: 52px; height: 52px; padding: 12px; border-radius: 14px;
+  background: var(--amber-bg); stroke: var(--amber); fill: none;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.flow b { font-size: 19px; color: var(--navy); }
+.flow b::before { content: counter(f) ". "; color: var(--ink-soft); font-weight: 600; }
+.flow span { color: var(--ink-soft); font-size: 15.5px; line-height: 1.4; }
 
 /* What only some pilots get */
 .extra {
